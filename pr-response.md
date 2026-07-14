@@ -40,4 +40,25 @@ I used AI for step-by-step project support, codebase orientation, and checking w
 **How I verified no conflict remains:** I ran `pytest tests/ -v` and confirmed all 8 tests pass. I also checked the branch history against `upstream/main` and confirmed the branch has a linear commit history with no merge commits.
 
 ## PR Description
-<!-- Written at the end — feature overview, design decisions, manual testing steps -->
+## PR Description
+
+### Summary
+
+This PR adds the watchlist feature to CineLog. Users can add films to their watchlist, view their saved films, and avoid duplicate watchlist entries. The implementation follows the existing collection service patterns for naming, validation, deduplication, and tests.
+
+### Design decisions
+
+I kept `public=True` as the default visibility for watchlist entries because CineLog is a community film tracking app, and public watchlists support sharing and film discovery. I documented the privacy tradeoff in this response doc.
+
+I kept watchlist results sorted alphabetically by film title. Collections use newest-first ordering because they represent viewing history, but watchlists work more like saved planning lists, where stable alphabetical browsing is useful. I added a test to document this behavior.
+
+### Rebase / UUID refactor
+
+I rebased the branch onto the updated `main`, which had migrated film IDs from integers to UUID strings. I restored the watchlist model using UUID-compatible `film_id` fields and verified the branch has no merge commits.
+
+### Manual testing steps
+
+1. Install dependencies:
+
+```bash
+pip install -r requirements.txt
