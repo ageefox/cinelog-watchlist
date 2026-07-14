@@ -4,16 +4,19 @@
 I used AI for step-by-step project support, codebase orientation, and checking whether my planned responses addressed the reviewer’s comments. I verified suggested changes against the actual CineLog code before applying them.
 
 ## Comment 1 — Rename
-**What I did:**
-**How I verified:**
+**What I did:** I renamed `save_to_watchlist()` to `add_to_watchlist()` in `services/watchlist_service.py`. This makes the watchlist service follow the same `verb_to_noun` naming convention used by existing service functions like `add_to_collection()` and `remove_from_collection()`.
+
+**How I verified:** I updated the watchlist route import and call site in `routes/watchlist/watchlist.py`, then searched the project for `save_to_watchlist` to confirm no old references remained. I also ran `pytest tests/ -v` and confirmed the test suite passed.
 
 ## Comment 2 — Deduplication
-**What I did:**
-**How I verified:**
+**What I did:** I added deduplication logic to `add_to_watchlist()`. Before creating a new `WatchlistEntry`, the function now checks whether an entry already exists for the same `user_id` and `film_id`. If it does, the function raises `AlreadyInWatchlistError` instead of silently creating a duplicate.
+
+**How I verified:** I followed the pattern from `add_to_collection()` and added `test_add_to_watchlist_duplicate_raises` in `tests/test_watchlist.py`. The test adds the same film twice, checks that the second call raises `AlreadyInWatchlistError`, and confirms that only one database row exists for that user and film.
 
 ## Comment 3 — Missing test
-**What I did:**
-**How I verified:**
+**What I did:** I created `tests/test_watchlist.py` and added a test for the nonexistent-film case. The test is modeled after `test_add_to_collection_nonexistent_film_raises` from `tests/test_collection.py`.
+
+**How I verified:** I ran `pytest tests/test_watchlist.py -v` to verify the new watchlist tests directly, then ran `pytest tests/ -v` to confirm the full test suite passes.
 
 ## Comment 4 — Default visibility
 **My position:** I kept `public=True` as the default for watchlist entries.
