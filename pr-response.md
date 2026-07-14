@@ -30,9 +30,11 @@ I used AI for step-by-step project support, codebase orientation, and checking w
 **Engagement with reviewer's point:** The reviewer’s date-added suggestion is reasonable because recently saved films may be the most relevant to the user. The tradeoff is that date-added ordering can make older saved films harder to find. For the current implementation, I chose alphabetical ordering because the endpoint does not yet support sorting options, and predictable browsing seemed more useful for a basic watchlist. I added a test documenting this behavior so the choice is explicit.
 
 ## Comment 6 — Rebase
-**What conflicted:**
-**How I resolved it:**
-**How I verified no conflict remains:**
+**What conflicted:** During the rebase onto `upstream/main`, the watchlist work conflicted with the main branch refactor that migrated film IDs from integer IDs to UUID strings. The watchlist model was also missing after replaying the branch on top of the updated main branch.
+
+**How I resolved it:** I restored `WatchlistEntry` in `models.py` using UUID-compatible fields. Specifically, `film_id` now uses `db.String(36)` to match the updated `Film.id`, and I added the missing `watchlist_entries` relationships on both `User` and `Film`. I also kept the unique constraint on `(user_id, film_id)` so duplicate watchlist rows are prevented at the model level as well as in service logic.
+
+**How I verified no conflict remains:** I ran `pytest tests/ -v` and confirmed all 8 tests pass. I also checked the branch history against `upstream/main` and confirmed the branch has a linear commit history with no merge commits.
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
